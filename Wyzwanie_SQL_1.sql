@@ -56,6 +56,8 @@ VALUES
 /* 1. Wypisz wszystkie wydatki z tabeli Expenses które powiązane są z użytkownikiem 'Filip'
    w kolejności od najnowszych do najstarszych 
    
+/*TEST*/
+
    2. Wypisz wszystkie wydatki użytkownika 'Filip' i 'Damian' które zostały wykonane w sklepie 'Lidl'
    
    3. Wypisz jaka jest cena najdroższego wydatku dla użytkownika 'Filip'
