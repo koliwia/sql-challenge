@@ -78,7 +78,7 @@ ORDER BY price DESC
 
 SELECT SUM(price)
 from Expenses
-where userid = 2
+where userid = 2 AND title = 'Mięso' AND date LIKE '%-03-%'
    
 /*  5.  Wypisz wszystkie wydatki wszystkich użytkowników które mają dodany opis */
 
@@ -95,9 +95,10 @@ where title = 'Mięso' AND userid = 2
 /*  7. Podlicz i wypisz za pomocą jednego zapytania ile wydał łącznie Filip oraz Damian dnia 07.03.2022.
       Wypisz wynik w postaci dwóch kolumn: Użytkownik, Kwota. */
 
-SELECT userid, SUM(price)
-from Expenses
-group by userid
+SELECT Users.Firstname, SUM(Expenses.Price)
+from Users INNER JOIN Expenses ON Users.id = Expenses.UserId
+WHERE Date LIKE '2022-03-07%'
+group by Users.FirstName
    
 /* Zadania z *
    
@@ -109,8 +110,9 @@ SELECT Users.firstname, Users.lastname, Expenses.title, Expenses.price
 FROM Users
 INNER JOIN  Expenses ON  Users.id = Expenses.UserId
 
-   
 /*  7. Podlicz i wypisz ile średnio wydaje Damian i Filip w każdym miesiącu na mięso */
 
-
-
+SELECT MONTH(Expenses.date) AS Month, AVG(Expenses.price) AS AVG_Price
+FROM Users INNER JOIN  Expenses ON  Users.id = Expenses.UserId
+WHERE title = 'Mięso'
+GROUP BY MONTH(Expenses.date)
