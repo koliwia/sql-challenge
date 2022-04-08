@@ -77,28 +77,28 @@ ORDER BY price DESC
 /*  4. Podlicz i wypisz ile sumarycznie wydał użytkownik 'Damian' na mięso w miesiącu 'Marzec' */
 
 SELECT SUM(price)
-from Expenses
-where userid = 2 AND title = 'Mięso' AND date LIKE '%-03-%'
+FROM Expenses
+WHERE userid = 2 AND title = 'Mięso' AND date LIKE '%-03-%'
    
 /*  5.  Wypisz wszystkie wydatki wszystkich użytkowników które mają dodany opis */
 
 SELECT *
-from Expenses
-where description IS NOT null
+FROM Expenses
+WHERE description IS NOT null
    
 /*  6. Podlicz i wypisz ile średnio wydawał użytkownik 'Damian' na mięso */
 
 SELECT AVG(price)
-from Expenses
-where title = 'Mięso' AND userid = 2
+FROM Expenses
+WHERE title = 'Mięso' AND userid = 2
    
 /*  7. Podlicz i wypisz za pomocą jednego zapytania ile wydał łącznie Filip oraz Damian dnia 07.03.2022.
       Wypisz wynik w postaci dwóch kolumn: Użytkownik, Kwota. */
 
-SELECT Users.Firstname, SUM(Expenses.Price)
+SELECT Users.Firstname, SUM(Expenses.Price) AS SUM_price
 from Users INNER JOIN Expenses ON Users.id = Expenses.UserId
 WHERE Date LIKE '2022-03-07%'
-group by Users.FirstName
+GROUP BY Users.FirstName
    
 /* Zadania z *
    
@@ -108,11 +108,30 @@ group by Users.FirstName
 
 SELECT Users.firstname, Users.lastname, Expenses.title, Expenses.price
 FROM Users
-INNER JOIN  Expenses ON  Users.id = Expenses.UserId
+INNER JOIN Expenses ON Users.id = Expenses.UserId
 
 /*  7. Podlicz i wypisz ile średnio wydaje Damian i Filip w każdym miesiącu na mięso */
 
-SELECT MONTH(Expenses.date) AS Month, AVG(Expenses.price) AS AVG_Price
-FROM Users INNER JOIN  Expenses ON  Users.id = Expenses.UserId
+/* Dla Damiana i Filipa łącznie */
+SELECT DATENAME(Month, date) AS Month, AVG(price) AS AVG_Price
+FROM Expenses
 WHERE title = 'Mięso'
-GROUP BY MONTH(Expenses.date)
+GROUP BY DATENAME(Month, date), MONTH(date)
+ORDER by MONTH(date)
+
+/* Dla Damiana i Filipa rozdzielnie */
+SELECT DATENAME(Month, Expenses.date) AS Month,
+Users.FirstName,
+AVG(Expenses.price) AS AVG_Price
+FROM Users
+INNER JOIN Expenses ON Users.id = Expenses.UserId
+WHERE title = 'Mięso'
+GROUP BY DATENAME(Month, Expenses.date), MONTH(Expenses.date), Users.firstname
+ORDER by MONTH(date)
+
+/* Jako ciekawostkę, powyższe próbowałem wykonać również wykorzystując subquery, niestety napotkałem poniżej opisane problemy, których nie umiałem rozwiązać */
+SELECT MONTH(date) AS Month, 
+(SELECT AVG(price) FROM Expenses WHERE title = 'Mięso' AND userid = 1) AS Filip, /* subquery Filip i Damian nie zwracają wartości odpowiedniej dla danego miesiąca, tylko w każdym miesiącu taką samą - nie potrafię sobie poradzić z powiązaniem subquery z query */
+(SELECT AVG(price) FROM Expenses WHERE title = 'Mięso' AND userid = 2) AS Damian /* próbowałem dodać aliasy do query i subquery, jednak nie udało mi się zrobić powiązania, które zwracałoby poprawne wartości */
+FROM Expenses
+GROUP BY MONTH(date)
