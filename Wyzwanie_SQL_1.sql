@@ -54,30 +54,66 @@ VALUES
 --ZADANIA
 
 /* 1. Wypisz wszystkie wydatki z tabeli Expenses które powiązane są z użytkownikiem 'Filip'
-   w kolejności od najnowszych do najstarszych 
+   w kolejności od najnowszych do najstarszych */
+
+   SELECT * FROM Expenses
+   WHERE userid = 1
+   ORDER BY date DESC
+
+/*   2. Wypisz wszystkie wydatki użytkownika 'Filip' i 'Damian' które zostały wykonane w sklepie 'Lidl' */
+
+   SELECT * FROM Expenses
+   WHERE userid = 1 AND storename = 'Lidl' OR userid = 2 AND storename = 'Lidl'
+
+/*   3. Wypisz jaka jest cena najdroższego wydatku dla użytkownika 'Filip' */
+
+   SELECT max(price)
+   FROM Expenses
+   WHERE userid = 1
+
+/*  4. Podlicz i wypisz ile sumarycznie wydał użytkownik 'Damian' na mięso w miesiącu 'Marzec' */
+
+   SELECT SUM(price)
+   FROM Expenses
+   WHERE userid = 1 AND title = 'Mięso' AND date LIKE ('%-03-%')
+
+
+/*  5.  Wypisz wszystkie wydatki wszystkich użytkowników które mają dodany opis */
+
+   SELECT price
+   FROM Expenses
+   WHERE description IS NOT NULL
    
-   2. Wypisz wszystkie wydatki użytkownika 'Filip' i 'Damian' które zostały wykonane w sklepie 'Lidl'
-   
-   3. Wypisz jaka jest cena najdroższego wydatku dla użytkownika 'Filip'
-   
-   4. Podlicz i wypisz ile sumarycznie wydał użytkownik 'Damian' na mięso w miesiącu 'Marzec'
-   
-   5.  Wypisz wszystkie wydatki wszystkich użytkowników które mają dodany opis
-   
-   6. Podlicz i wypisz ile średnio wydawał użytkownik 'Damian' na mięso
-   
-   7. Podlicz i wypisz za pomocą jednego zapytania ile wydał łącznie Filip oraz Damian dnia 07.03.2022.
-      Wypisz wynik w postaci dwóch kolumn: Użytkownik, Kwota. 
+/*   6. Podlicz i wypisz ile średnio wydawał użytkownik 'Damian' na mięso */
+
+   SELECT AVG(price)
+   FROM Expenses
+   WHERE userid = 2 AND title = 'Mięso'
+
+/*   7. Podlicz i wypisz za pomocą jednego zapytania ile wydał łącznie Filip oraz Damian dnia 07.03.2022.
+      Wypisz wynik w postaci dwóch kolumn: Użytkownik, Kwota. */
       
-   Zadania z *
+   SELECT firstname AS Użytkownik, SUM(price) AS Kwota
+   FROM Expenses
+   INNER JOIN Users ON Users.id = Expenses.userid
+   WHERE date like '2022-03-07%' GROUP BY Users.firstname
+
    
-   6. Wypisz wszytkie wydatki wszystkich użytkowników łączac dane z tabeli Expenses z danymi z tabeli 
+/*   6. Wypisz wszytkie wydatki wszystkich użytkowników łączac dane z tabeli Expenses z danymi z tabeli 
       Users za pomocą komendy JOIN - w formie:
-      FirstName, LastName, Title, Price 
+      FirstName, LastName, Title, Price */
    
-   7. Podlicz i wypisz ile średnio wydaje Damian i Filip w każdym miesiącu na mięso
-  
-   */
+   SELECT Users.firstname, Users.lastname, Expenses.title, Expenses.price
+   FROM Users
+   INNER JOIN Expenses ON Users.id = Expenses.userid
+
+
+/*   7. Podlicz i wypisz ile średnio wydaje Damian i Filip w każdym miesiącu na mięso */
+   SELECT AVG (price) FROM Expenses
+   WHERE title = 'Mięso'
+   GROUP BY month(date)
+
+
 
 
 
