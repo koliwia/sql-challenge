@@ -67,7 +67,7 @@ VALUES
 
 /*   3. Wypisz jaka jest cena najdroższego wydatku dla użytkownika 'Filip' */
 
-   SELECT max(price)
+   SELECT MAX(price)
    FROM Expenses
    WHERE userid = 1
 
